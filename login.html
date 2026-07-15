@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In - Soulvana</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div style="max-width:400px;margin:50px auto;background:white;padding:25px;border-radius:15px;color:black;">
+    <h2>❤️ Welcome Back</h2>
+
+    <input type="email" id="email" placeholder="Email" style="width:100%;padding:10px;margin:10px 0;">
+    <input type="password" id="password" placeholder="Password" style="width:100%;padding:10px;margin:10px 0;">
+
+    <button id="loginBtn" style="width:100%;margin-top:15px;">Log In</button>
+
+    <p style="margin-top:20px;">
+        Don't have an account?
+        <a href="signup.html">Create Account</a>
+    </p>
+
+    <p id="message"></p>
+</div>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+
+        document.getElementById("message").innerHTML = "✅ Login successful!";
+        window.location.href = "dashboard.html";
+
+    } catch (error) {
+        document.getElementById("message").innerHTML = "❌ " + error.message;
+    }
+});
+</script>
+
+</body>
+</html>
