@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soulvana Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>❤️ Soulvana</h1>
+    <p>Welcome to your dashboard</p>
+</header>
+
+<main>
+
+<div style="background:white;color:black;padding:20px;border-radius:15px;max-width:500px;margin:auto;">
+
+<h2 id="welcome">Loading...</h2>
+
+<p>Email: <span id="email"></span></p>
+
+<hr><br>
+
+<h3>💖 Discover Love</h3>
+
+<p>Your matches will appear here.</p>
+
+<button id="logoutBtn">Logout</button>
+
+</div>
+
+</main>
+
+<script type="module">
+import { auth, db } from "./firebase.js";
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+onAuthStateChanged(auth, async(user) => {
+
+if(!user){
+window.location.href="login.html";
+return;
+}
+
+document.getElementById("email").textContent=user.email;
+
+const snap=await getDoc(doc(db,"users",user.uid));
+
+if(snap.exists()){
+document.getElementById("welcome").textContent="Welcome, "+snap.data().name+" ❤️";
+}
+
+});
+
+document.getElementById("logoutBtn").onclick=async()=>{
+await signOut(auth);
+window.location.href="login.html";
+};
+</script>
+
+</body>
+</html>
