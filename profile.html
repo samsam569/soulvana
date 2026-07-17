@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,9 +5,10 @@
 <link rel="stylesheet" href="style.css">
 <style>
   body { background: #ffe6f0; text-align: center; padding: 20px; }
-  input, textarea, button { width: 90%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
-  button { background: #ff4d94; color: white; border: none; font-weight: bold; }
+  input, textarea, button, select { width: 90%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
+  button { background: #ff4d94; color: white; border: none; font-weight: bold; cursor: pointer; }
   img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+  label { font-weight: bold; color: #e60073; }
 </style>
 </head>
 <body>
@@ -17,8 +17,25 @@
 
 <input id="name" placeholder="Your name"><br>
 <input id="age" type="number" placeholder="Your age"><br>
+
+<label>I am:</label><br>
+<select id="gender">
+  <option value="">Select Gender</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+</select><br>
+
+<label>Looking for:</label><br>
+<select id="lookingFor">
+  <option value="">Select</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+  <option value="Both">Male & Female</option>
+</select><br>
+
 <input id="location" placeholder="Your location"><br>
 <textarea id="bio" placeholder="Tell people about yourself"></textarea><br>
+
 <b>Add Photo:</b><br>
 <input id="photo" type="file" accept="image/*"><br>
 <img id="preview" style="display:none;"><br>
@@ -29,8 +46,8 @@ document.getElementById('photo').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if(file){
     const reader = new FileReader();
-    reader.onload = (e) => {
-      document.getElementById('preview').src = e.target.result;
+    reader.onload = (ev) => {
+      document.getElementById('preview').src = ev.target.result;
       document.getElementById('preview').style.display = 'block';
     }
     reader.readAsDataURL(file);
@@ -40,15 +57,24 @@ document.getElementById('photo').addEventListener('change', (e) => {
 document.getElementById('saveProfile').addEventListener('click', () => {
   const name = document.getElementById('name').value.trim();
   const age = document.getElementById('age').value.trim();
+  const gender = document.getElementById('gender').value;
+  const lookingFor = document.getElementById('lookingFor').value;
   const location = document.getElementById('location').value.trim();
   const bio = document.getElementById('bio').value.trim();
   const photoFile = document.getElementById('photo').files[0];
 
-  if(!name ||!age ||!photoFile) { alert("Please add Name, Age and Photo!"); return; }
+  if(!name ||!age ||!gender ||!lookingFor ||!photoFile) { 
+    alert("Please fill Name, Age, Gender, Looking for and Photo!"); 
+    return; 
+  }
 
   const reader = new FileReader();
-  reader.onload = function(e) {
-    const profile = { id: Date.now(), name, age, location, bio, photo: e.target.result };
+  reader.onload = function(ev) {
+    const profile = { 
+      id: Date.now(), 
+      name, age, gender, lookingFor, location, bio, 
+      photo: ev.target.result 
+    };
     let users = JSON.parse(localStorage.getItem('soulvanaUsers')) || [];
     users.push(profile);
     localStorage.setItem('soulvanaUsers', JSON.stringify(users));
