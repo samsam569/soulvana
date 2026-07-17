@@ -1,24 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Create Profile - Soulvana</title>
-</head>
+// Show photo preview
+document.getElementById('photo').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('preview').src = e.target.result;
+      document.getElementById('preview').style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+});
 
-<body>
+// Save profile
+document.getElementById('saveProfile').addEventListener('click', () => {
+  const name = document.getElementById('name').value.trim();
+  const age = document.getElementById('age').value.trim();
+  const location = document.getElementById('location').value.trim();
+  const bio = document.getElementById('bio').value.trim();
+  const photoFile = document.getElementById('photo').files[0];
 
-<h1>❤️ Create Your Soulvana Profile</h1>
+  if(!name ||!age ||!photoFile) {
+    alert("Please add Name, Age and Photo!");
+    return;
+  }
 
-<input id="name" placeholder="Your name"><br><br>
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const profile = {
+      id: Date.now(), // unique id
+      name, age, location, bio,
+      photo: e.target.result // saves as base64
+    };
 
-<input id="age" placeholder="Your age"><br><br>
+    // Get old users + add new one
+    let users = JSON.parse(localStorage.getItem('soulvanaUsers')) || [];
+    users.push(profile);
+    localStorage.setItem('soulvanaUsers', JSON.stringify(users));
 
-<input id="location" placeholder="Your location"><br><br>
-
-<textarea id="bio" placeholder="Tell people about yourself"></textarea><br><br>
-
-<button id="saveProfile">Save Profile</button>
-
-<script type="module" src="profile.js"></script>
-
-</body>
-</html>
+    alert("Profile Saved! ✅");
+    window.location.href = "matches.html"; // send to matches page
+  }
+  reader.readAsDataURL(photoFile);
+});
