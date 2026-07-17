@@ -1,35 +1,30 @@
 import { db, auth } from "./firebase.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { doc, setDoc } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+document.getElementById("saveProfile").addEventListener("click", async () => {
 
+  const user = auth.currentUser;
 
-document.getElementById("saveProfile").onclick = async () => {
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
 
-const user = auth.currentUser;
+  try {
 
-if (!user) {
-alert("Login first");
-return;
-}
+    await setDoc(doc(db, "users", user.uid), {
+      name: document.getElementById("name").value,
+      age: document.getElementById("age").value,
+      location: document.getElementById("location").value,
+      bio: document.getElementById("bio").value,
+      email: user.email
+    });
 
-await setDoc(doc(db,"users",user.uid),{
+    alert("Profile saved ❤️");
+    window.location.href = "dashboard.html";
 
-name: document.getElementById("name").value,
-
-age: document.getElementById("age").value,
-
-location: document.getElementById("location").value,
-
-bio: document.getElementById("bio").value,
-
-email: user.email
+  } catch (error) {
+    alert(error.message);
+  }
 
 });
-
-
-alert("Profile saved ❤️");
-
-window.location.href="dashboard.html";
-
-};
