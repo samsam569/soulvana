@@ -1,4 +1,30 @@
-// Show photo preview
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Profile - Soulvana</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: #ffe6f0; text-align: center; padding: 20px; }
+  input, textarea, button { width: 90%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
+  button { background: #ff4d94; color: white; border: none; font-weight: bold; }
+  img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+</style>
+</head>
+<body>
+
+<h1>❤️ Create Your Soulvana Profile</h1>
+
+<input id="name" placeholder="Your name"><br>
+<input id="age" type="number" placeholder="Your age"><br>
+<input id="location" placeholder="Your location"><br>
+<textarea id="bio" placeholder="Tell people about yourself"></textarea><br>
+<b>Add Photo:</b><br>
+<input id="photo" type="file" accept="image/*"><br>
+<img id="preview" style="display:none;"><br>
+<button id="saveProfile">Save Profile</button>
+
+<script>
 document.getElementById('photo').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if(file){
@@ -11,7 +37,6 @@ document.getElementById('photo').addEventListener('change', (e) => {
   }
 });
 
-// Save profile
 document.getElementById('saveProfile').addEventListener('click', () => {
   const name = document.getElementById('name').value.trim();
   const age = document.getElementById('age').value.trim();
@@ -19,26 +44,19 @@ document.getElementById('saveProfile').addEventListener('click', () => {
   const bio = document.getElementById('bio').value.trim();
   const photoFile = document.getElementById('photo').files[0];
 
-  if(!name ||!age ||!photoFile) {
-    alert("Please add Name, Age and Photo!");
-    return;
-  }
+  if(!name ||!age ||!photoFile) { alert("Please add Name, Age and Photo!"); return; }
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    const profile = {
-      id: Date.now(), // unique id
-      name, age, location, bio,
-      photo: e.target.result // saves as base64
-    };
-
-    // Get old users + add new one
+    const profile = { id: Date.now(), name, age, location, bio, photo: e.target.result };
     let users = JSON.parse(localStorage.getItem('soulvanaUsers')) || [];
     users.push(profile);
     localStorage.setItem('soulvanaUsers', JSON.stringify(users));
-
     alert("Profile Saved! ✅");
-    window.location.href = "matches.html"; // send to matches page
+    window.location.href = "matches.html";
   }
   reader.readAsDataURL(photoFile);
 });
+</script>
+</body>
+</html>
