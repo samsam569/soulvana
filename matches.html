@@ -1,81 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soulvana Dashboard</title>
+<title>Soulvana Matches</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header>
-    <h1>❤️ Soulvana</h1>
-    <p>Welcome to your dashboard</p>
-</header>
+<h1>💞 Soulvana Matches</h1>
 
-<main>
+<p>Users will appear here soon ❤️</p>
 
-<div style="background:white;color:black;padding:20px;border-radius:15px;max-width:500px;margin:auto;">
-
-<h2 id="welcome">Welcome!</h2>
-
-<p>Email: <span id="email"></span></p>
-
-<hr><br>
-
-<h3>💖 Discover Love</h3>
-
-<p>Your matches will appear here.</p>
-
-<!-- Profile Creation Link -->
-<a href="profile.html">
-    <button>❤️ Create Your Profile</button>
+<a href="dashboard.html">
+<button>Back to Dashboard</button>
 </a>
-
-<br><br>
-
-<!-- Future Match Page -->
-<a href="matches.html">
-    <button>💞 Find Matches</button>
-</a>
-
-<br><br>
-
-<button id="logoutBtn">Logout</button>
-
-</div>
-
-</main>
-
-
-<script type="module">
-import { auth } from "./firebase.js";
-import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-onAuthStateChanged(auth, (user) => {
-
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  document.getElementById("email").textContent = user.email;
-
-  const name = user.displayName || user.email.split("@")[0];
-  document.getElementById("welcome").textContent = "Welcome, " + name + " ❤️";
-
-});
-
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "login.html";
-});
-
-</script>
 
 </body>
 </html>
