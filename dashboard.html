@@ -27,11 +27,26 @@
 
 <p>Your matches will appear here.</p>
 
+<!-- Profile Creation Link -->
+<a href="profile.html">
+    <button>❤️ Create Your Profile</button>
+</a>
+
+<br><br>
+
+<!-- Future Match Page -->
+<a href="matches.html">
+    <button>💞 Find Matches</button>
+</a>
+
+<br><br>
+
 <button id="logoutBtn">Logout</button>
 
 </div>
 
 </main>
+
 
 <script type="module">
 import { auth } from "./firebase.js";
@@ -54,10 +69,12 @@ onAuthStateChanged(auth, (user) => {
 
 });
 
+
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "login.html";
 });
+
 </script>
 
 </body>
