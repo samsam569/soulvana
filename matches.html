@@ -3,17 +3,57 @@
 <head>
 <title>Soulvana Matches</title>
 <link rel="stylesheet" href="style.css">
+<style>
+  body { font-family: Arial; padding: 20px; background: #ffe6f0; }
+  h1 { text-align: center; color: #e60073; }
+  .card { background: white; border-radius: 15px; padding: 15px; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+  .card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ff4d94; }
+  .approve { background: #00cc66; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+  .approve:hover { background: #00994d; }
+  .no-users { text-align: center; color: #888; margin-top: 50px; }
+  button.back { background: #ff4d94; color: white; border: none; padding: 10px 20px; border-radius: 10px; margin-top: 20px; }
+</style>
 </head>
 
 <body>
 
 <h1>💞 Soulvana Matches</h1>
 
-<p>Users will appear here soon ❤️</p>
+<div id="usersContainer">
+  <p class="no-users">Users will appear here soon ❤️</p>
+</div>
 
 <a href="dashboard.html">
-<button>Back to Dashboard</button>
+<button class="back">Back to Dashboard</button>
 </a>
+
+<script>
+  // Load users from storage
+  const users = JSON.parse(localStorage.getItem('soulvanaUsers')) || [];
+  const container = document.getElementById('usersContainer');
+
+  if(users.length > 0){
+    container.innerHTML = ""; // remove "users will appear" text
+    
+    users.forEach(user => {
+      container.innerHTML += `
+        <div class="card">
+          <img src="${user.photo}">
+          <h3>${user.name}, ${user.age}</h3>
+          <p><b>${user.gender}</b> • Looking for: ${user.lookingFor}</p>
+          <p><b>📍 ${user.location}</b></p>
+          <p>${user.bio}</p>
+          <button class="approve" onclick="approve(${user.id})">✓ Approve</button>
+        </div>
+      `;
+    });
+  }
+
+  function approve(id){
+    alert("You approved this profile! 💖 They will be notified!");
+    // Later we add matching logic here
+  }
+</script>
 
 </body>
 </html>
