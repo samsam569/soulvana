@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Soulvana</title>
+</head>
+<body>
+
+<h2>Create Account</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<button id="signupBtn">Create Account</button>
+
+<p id="message"></p>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    document.getElementById("message").textContent = "Account created successfully!";
+    window.location.href = "login.html";
+  } catch (error) {
+    document.getElementById("message").textContent = error.message;
+  }
+});
+</script>
+
+</body>
+</html>
