@@ -17,7 +17,7 @@
 
 <div style="background:white;color:black;padding:20px;border-radius:15px;max-width:500px;margin:auto;">
 
-<h2 id="welcome">Loading...</h2>
+<h2 id="welcome">Welcome!</h2>
 
 <p>Email: <span id="email"></span></p>
 
@@ -34,38 +34,30 @@
 </main>
 
 <script type="module">
-import { auth, db } from "./firebase.js";
+import { auth } from "./firebase.js";
 import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import {
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+onAuthStateChanged(auth, (user) => {
 
-onAuthStateChanged(auth, async(user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-if(!user){
-window.location.href="login.html";
-return;
-}
+  document.getElementById("email").textContent = user.email;
 
-document.getElementById("email").textContent=user.email;
-
-const snap=await getDoc(doc(db,"users",user.uid));
-
-if(snap.exists()){
-document.getElementById("welcome").textContent="Welcome, "+snap.data().name+" ❤️";
-}
+  const name = user.displayName || user.email.split("@")[0];
+  document.getElementById("welcome").textContent = "Welcome, " + name + " ❤️";
 
 });
 
-document.getElementById("logoutBtn").onclick=async()=>{
-await signOut(auth);
-window.location.href="login.html";
-};
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+});
 </script>
 
 </body>
