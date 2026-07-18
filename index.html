@@ -1,32 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Soulvana - Real Connections. Lasting Love.</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soulvana - Real Connections. Lasting Love.</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#120018;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    text-align:center;
+}
+
+.container{
+    width:90%;
+    max-width:500px;
+}
+
+.logo{
+    width:180px;
+    margin-bottom:20px;
+}
+
+h1{
+    font-size:56px;
+    color:#ff4f94;
+    margin-bottom:10px;
+}
+
+.tagline{
+    font-size:22px;
+    color:#ffffff;
+    margin-bottom:30px;
+}
+
+.btn{
+    display:inline-block;
+    margin:10px;
+    padding:15px 35px;
+    background:#ff2d75;
+    color:white;
+    text-decoration:none;
+    border-radius:50px;
+    font-size:18px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.btn:hover{
+    background:#ff5ca8;
+}
+
+.subtitle{
+    margin-top:35px;
+    font-size:18px;
+    color:#ddd;
+}
+
+.features{
+    margin-top:20px;
+    font-size:22px;
+    color:#ff5ca8;
+}
+</style>
+
 </head>
 <body>
 
-  <header>
-    <h1>❤️ Soulvana</h1>
-    <p>Real Connections. Lasting Love.</p>
-  </header>
+<div class="container">
 
-  <main>
-    <h2>Welcome to Soulvana</h2>
-    <p>Find genuine connections and meaningful relationships.</p>
+    <!-- Replace logo.png with your Soulvana logo -->
+    <img src="images/logo.png" class="logo" alt="Soulvana Logo">
 
-    <div class="buttons">
-      <a href="signup.html"><button>Create Account</button></a>
-      <a href="login.html"><button>Log In</button></a>
-    </div>
-  </main>
+    <h1>Soulvana</h1>
 
-  <footer>
-    <p>© 2026 Soulvana. All rights reserved.</p>
-  </footer>
+    <p class="tagline">Real Connections. Lasting Love.</p>
 
-<script type="module" src="./firebase.js"></script>
+    <a href="signup.html" class="btn">Sign Up</a>
+    <a href="login.html" class="btn">Login</a>
+
+    <p class="subtitle">
+        Meet genuine people near you
+    </p>
+
+    <p class="features">
+        ❤️ Swipe • Match • Chat ❤️
+    </p>
+
+</div>
+
 </body>
 </html>
