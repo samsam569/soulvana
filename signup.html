@@ -15,6 +15,22 @@
 
 <input type="text" id="name" placeholder="Full Name" style="width:100%;padding:10px;margin:10px 0;">
 
+<input type="number" id="age" placeholder="Age" style="width:100%;padding:10px;margin:10px 0;">
+
+<select id="gender" style="width:100%;padding:10px;margin:10px 0;">
+    <option value="">Select Gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+</select>
+
+<select id="lookingFor" style="width:100%;padding:10px;margin:10px 0;">
+    <option value="">Looking For</option>
+    <option value="Female">Woman</option>
+    <option value="Male">Man</option>
+</select>
+
+<input type="text" id="country" placeholder="Country" style="width:100%;padding:10px;margin:10px 0;">
+
 <input type="email" id="email" placeholder="Email" style="width:100%;padding:10px;margin:10px 0;">
 
 <input type="password" id="password" placeholder="Password (Minimum 6 characters)" style="width:100%;padding:10px;margin:10px 0;">
@@ -52,10 +68,15 @@ const message = document.getElementById("message");
 signupBtn.addEventListener("click", async () => {
 
 const name = document.getElementById("name").value.trim();
+const age = document.getElementById("age").value;
+const gender = document.getElementById("gender").value;
+const lookingFor = document.getElementById("lookingFor").value;
+const country = document.getElementById("country").value.trim();
 const email = document.getElementById("email").value.trim();
 const password = document.getElementById("password").value;
 
-if (!name || !email || !password) {
+if (!name || !age || !gender || !lookingFor || !country || !email || !password) {
+    message.style.color = "red";
     message.textContent = "Please fill in all fields.";
     return;
 }
@@ -72,8 +93,12 @@ await updateProfile(userCredential.user, {
 });
 
 await setDoc(doc(db, "users", userCredential.user.uid), {
-    name: name,
-    email: email,
+    name,
+    age: Number(age),
+    gender,
+    lookingFor,
+    country,
+    email,
     createdAt: serverTimestamp()
 });
 
