@@ -1,17 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Soulvana Matches</title>
 <link rel="stylesheet" href="style.css">
+
 <style>
-  body { font-family: Arial; padding: 20px; background: #ffe6f0; }
-  h1 { text-align: center; color: #e60073; }
-  .card { background: white; border-radius: 15px; padding: 15px; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-  .card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ff4d94; }
-  .approve { background: #00cc66; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 8px; }
-  .approve:hover { background: #00994d; }
-  .no-users { text-align: center; color: #888; margin-top: 50px; }
-  button.back { background: #ff4d94; color: white; border: none; padding: 10px 20px; border-radius: 10px; margin-top: 20px; }
+body{
+  font-family:Arial,sans-serif;
+  background:#ffe6f0;
+  padding:20px;
+}
+h1{
+  text-align:center;
+  color:#e60073;
+}
+.card{
+  background:white;
+  border-radius:15px;
+  padding:20px;
+  margin:15px auto;
+  max-width:400px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  text-align:center;
+}
+.approve{
+  background:#00cc66;
+  color:white;
+  border:none;
+  padding:10px 20px;
+  border-radius:20px;
+  cursor:pointer;
+}
+.back{
+  background:#ff4d94;
+  color:white;
+  border:none;
+  padding:10px 20px;
+  border-radius:10px;
+  display:block;
+  margin:20px auto;
+}
 </style>
 </head>
 
@@ -20,39 +50,64 @@
 <h1>💞 Soulvana Matches</h1>
 
 <div id="usersContainer">
-  <p class="no-users">Users will appear here soon ❤️</p>
+Loading users...
 </div>
 
 <a href="dashboard.html">
 <button class="back">Back to Dashboard</button>
 </a>
 
-<script>
-  // Load users from storage
-  const users = JSON.parse(localStorage.getItem('soulvanaUsers')) || [];
-  const container = document.getElementById('usersContainer');
+<script type="module">
+import { db, auth } from "./firebase.js";
+import {
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  if(users.length > 0){
-    container.innerHTML = ""; // remove "users will appear" text
-    
-    users.forEach(user => {
-      container.innerHTML += `
-        <div class="card">
-          <img src="${user.photo}">
-          <h3>${user.name}, ${user.age}</h3>
-          <p><b>${user.gender}</b> • Looking for: ${user.lookingFor}</p>
-          <p><b>📍 ${user.location}</b></p>
-          <p>${user.bio}</p>
-          <button class="approve" onclick="approve(${user.id})">✓ Approve</button>
-        </div>
-      `;
-    });
-  }
+const container = document.getElementById("usersContainer");
 
-  function approve(id){
-    alert("You approved this profile! 💖 They will be notified!");
-    // Later we add matching logic here
-  }
+async function loadUsers(){
+
+container.innerHTML="";
+
+const snapshot = await getDocs(collection(db,"users"));
+
+snapshot.forEach((doc)=>{
+
+const user=doc.data();
+
+if(auth.currentUser && doc.id===auth.currentUser.uid){
+return;
+}
+
+container.innerHTML += `
+<div class="card">
+<h2>${user.name || "Unknown"}</h2>
+
+<p><strong>Age:</strong> ${user.age || "-"}</p>
+
+<p><strong>Gender:</strong> ${user.gender || "-"}</p>
+
+<p><strong>Looking For:</strong> ${user.lookingFor || "-"}</p>
+
+<p><strong>Country:</strong> ${user.country || "-"}</p>
+
+<button class="approve">
+❤️ Like
+</button>
+
+</div>
+`;
+
+});
+
+if(container.innerHTML===""){
+container.innerHTML="<p>No users found.</p>";
+}
+
+}
+
+loadUsers();
 </script>
 
 </body>
