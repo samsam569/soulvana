@@ -1,114 +1,70 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Create Profile - Soulvana</title>
-<link rel="stylesheet" href="style.css">
-<style>
-  body { background: #ffe6f0; text-align: center; padding: 20px; }
-  input, textarea, button, select { width: 90%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
-  button { background: #ff4d94; color: white; border: none; font-weight: bold; cursor: pointer; }
-  button:disabled { background: #ccc; }
-  img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #ff4d94; }
-  label { font-weight: bold; color: #e60073; }
-</style>
-</head>
-<body>
-
-<h1>❤️ Create Your Soulvana Profile</h1>
-
-<input id="name" placeholder="Your name"><br>
-<input id="age" type="number" placeholder="Your age"><br>
-
-<label>I am:</label><br>
-<select id="gender">
-  <option value="">Select Gender</option>
-  <option value="Male">Male</option>
-  <option value="Female">Female</option>
-</select><br>
-
-<label>Looking for:</label><br>
-<select id="lookingFor">
-  <option value="">Select</option>
-  <option value="Male">Male</option>
-  <option value="Female">Female</option>
-  <option value="Both">Male & Female</option>
-</select><br>
-
-<input id="location" placeholder="Your location"><br>
-<textarea id="bio" placeholder="Tell people about yourself"></textarea><br>
-
-<b>Add Photo:</b><br>
-<input id="photo" type="file" accept="image/*"><br>
-<img id="preview" style="display:none;"><br>
-<button id="saveProfile">Save Profile</button>
-
 <script type="module">
-// 1. Import Firebase
-import { db, auth, storage } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-// Photo preview
-document.getElementById('photo').addEventListener('change', (e) => {
+document.getElementById("photo").addEventListener("change", (e) => {
   const file = e.target.files[0];
-  if(file){
+  if (file) {
     const reader = new FileReader();
     reader.onload = (ev) => {
-      document.getElementById('preview').src = ev.target.result;
-      document.getElementById('preview').style.display = 'block';
-    }
+      document.getElementById("preview").src = ev.target.result;
+      document.getElementById("preview").style.display = "block";
+    };
     reader.readAsDataURL(file);
   }
 });
 
-// Save to Firebase
-document.getElementById('saveProfile').addEventListener('click', async () => {
+document.getElementById("saveProfile").addEventListener("click", async () => {
   const user = auth.currentUser;
-  if(!user){ 
-    alert("Please login first!"); 
+
+  if (!user) {
+    alert("Please log in first.");
     window.location.href = "login.html";
-    return; 
+    return;
   }
 
-  const name = document.getElementById('name').value.trim();
-  const age = document.getElementById('age').value.trim();
-  const gender = document.getElementById('gender').value;
-  const lookingFor = document.getElementById('lookingFor').value;
-  const location = document.getElementById('location').value.trim();
-  const bio = document.getElementById('bio').value.trim();
-  const photoFile = document.getElementById('photo').files[0];
+  const name = document.getElementById("name").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const gender = document.getElementById("gender").value;
+  const lookingFor = document.getElementById("lookingFor").value;
+  const location = document.getElementById("location").value.trim();
+  const bio = document.getElementById("bio").value.trim();
+  const photoFile = document.getElementById("photo").files[0];
 
-  if(!name ||!age ||!gender ||!lookingFor ||!photoFile) { 
-    alert("Please fill Name, Age, Gender, Looking for and Photo!"); 
-    return; 
+  if (!name || !age || !gender || !lookingFor || !photoFile) {
+    alert("Please fill in all required fields.");
+    return;
   }
 
-  document.getElementById('saveProfile').innerText = "Saving...";
-  document.getElementById('saveProfile').disabled = true;
+  const button = document.getElementById("saveProfile");
+  button.disabled = true;
+  button.textContent = "Saving...";
 
-  try {
-    // 2. Upload photo to Firebase Storage
-    const storageRef = ref(storage, `profilePics/${user.uid}`);
-    await uploadBytes(storageRef, photoFile);
-    const photoURL = await getDownloadURL(storageRef);
+  const reader = new FileReader();
 
-    // 3. Save profile to Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      name, age, gender, lookingFor, location, bio, 
-      email: user.email,
-      photo: photoURL,
-      createdAt: new Date()
-    });
+  reader.onload = async (e) => {
+    try {
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        age: Number(age),
+        gender,
+        lookingFor,
+        location,
+        bio,
+        email: user.email,
+        photo: e.target.result,
+        createdAt: new Date().toISOString()
+      });
 
-    alert("Profile Saved! ✅");
-    window.location.href = "matches.html";
+      alert("Profile saved successfully! ❤️");
+      window.location.href = "matches.html";
+    } catch (error) {
+      alert("Error: " + error.message);
+      button.disabled = false;
+      button.textContent = "Save Profile";
+    }
+  };
 
-  } catch(error){
-    alert("Error: " + error.message);
-    document.getElementById('saveProfile').innerText = "Save Profile";
-    document.getElementById('saveProfile').disabled = false;
-  }
+  reader.readAsDataURL(photoFile);
 });
 </script>
-</body>
-</html>
