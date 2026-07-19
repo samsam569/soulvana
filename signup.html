@@ -6,6 +6,7 @@
 <title>Sign Up - Soulvana</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div style="max-width:400px;margin:50px auto;background:white;padding:25px;border-radius:15px;color:black;">
@@ -16,7 +17,7 @@
 
 <input type="email" id="email" placeholder="Email" style="width:100%;padding:10px;margin:10px 0;">
 
-<input type="password" id="password" placeholder="Password (minimum 6 characters)" style="width:100%;padding:10px;margin:10px 0;">
+<input type="password" id="password" placeholder="Password (Minimum 6 characters)" style="width:100%;padding:10px;margin:10px 0;">
 
 <button id="signupBtn" style="width:100%;padding:12px;margin-top:10px;">
 Create Account
@@ -45,40 +46,51 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-document.getElementById("signupBtn").addEventListener("click", async () => {
+const signupBtn = document.getElementById("signupBtn");
+const message = document.getElementById("message");
+
+signupBtn.addEventListener("click", async () => {
 
 const name = document.getElementById("name").value.trim();
 const email = document.getElementById("email").value.trim();
 const password = document.getElementById("password").value;
 
-if(name === "" || email === "" || password === ""){
-    document.getElementById("message").textContent = "Please fill in all fields.";
+if (!name || !email || !password) {
+    message.textContent = "Please fill in all fields.";
     return;
 }
 
-try{
+signupBtn.disabled = true;
+signupBtn.textContent = "Creating Account...";
 
-const userCredential = await createUserWithEmailAndPassword(auth,email,password);
+try {
 
-await updateProfile(userCredential.user,{
-displayName:name
+const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+await updateProfile(userCredential.user, {
+    displayName: name
 });
 
-await setDoc(doc(db,"users",userCredential.user.uid),{
-name:name,
-email:email,
-createdAt:serverTimestamp()
+await setDoc(doc(db, "users", userCredential.user.uid), {
+    name: name,
+    email: email,
+    createdAt: serverTimestamp()
 });
 
-document.getElementById("message").textContent="✅ Account created successfully!";
+message.style.color = "green";
+message.textContent = "✅ Account created successfully!";
 
-setTimeout(()=>{
-window.location.href="login.html";
-},1500);
+setTimeout(() => {
+    window.location.href = "login.html";
+}, 1500);
 
-}catch(error){
-document.getElementById("message").textContent="❌ "+error.message;
+} catch (error) {
+    message.style.color = "red";
+    message.textContent = error.message;
 }
+
+signupBtn.disabled = false;
+signupBtn.textContent = "Create Account";
 
 });
 </script>
