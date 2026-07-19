@@ -2,19 +2,23 @@
 import { auth, db } from "./firebase.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-document.getElementById("photo").addEventListener("change", (e) => {
+const photoInput = document.getElementById("photo");
+const preview = document.getElementById("preview");
+const saveButton = document.getElementById("saveProfile");
+
+photoInput.addEventListener("change", (e) => {
   const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      document.getElementById("preview").src = ev.target.result;
-      document.getElementById("preview").style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  }
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    preview.src = ev.target.result;
+    preview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
 });
 
-document.getElementById("saveProfile").addEventListener("click", async () => {
+saveButton.addEventListener("click", async () => {
   const user = auth.currentUser;
 
   if (!user) {
@@ -29,12 +33,15 @@ document.getElementById("saveProfile").addEventListener("click", async () => {
   const lookingFor = document.getElementById("lookingFor").value;
   const location = document.getElementById("location").value.trim();
   const bio = document.getElementById("bio").value.trim();
-  const photoFile = document.getElementById("photo").files[0];
+  const photoFile = photoInput.files[0];
 
   if (!name || !age || !gender || !lookingFor || !photoFile) {
-    alert("Please fill all required fields.");
+    alert("Please fill in all required fields.");
     return;
   }
+
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving...";
 
   const reader = new FileReader();
 
@@ -42,13 +49,14 @@ document.getElementById("saveProfile").addEventListener("click", async () => {
     try {
       await setDoc(doc(db, "users", user.uid), {
         name,
-        age,
+        age: Number(age),
         gender,
         lookingFor,
         location,
         bio,
+        email: user.email,
         photo: e.target.result,
-        email: user.email
+        createdAt: new Date().toISOString()
       });
 
       alert("Profile saved successfully! ❤️");
@@ -56,6 +64,8 @@ document.getElementById("saveProfile").addEventListener("click", async () => {
     } catch (error) {
       console.error(error);
       alert("Error: " + error.message);
+      saveButton.disabled = false;
+      saveButton.textContent = "Save Profile";
     }
   };
 
