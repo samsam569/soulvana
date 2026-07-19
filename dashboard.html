@@ -27,14 +27,12 @@
 
 <p>Your matches will appear here.</p>
 
-<!-- Profile Creation Link -->
 <a href="profile.html">
     <button>❤️ Create Your Profile</button>
 </a>
 
 <br><br>
 
-<!-- Future Match Page -->
 <a href="matches.html">
     <button>💞 Find Matches</button>
 </a>
@@ -47,7 +45,6 @@
 
 </main>
 
-
 <script type="module">
 import { auth } from "./firebase.js";
 import {
@@ -56,7 +53,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 onAuthStateChanged(auth, (user) => {
-
   if (!user) {
     window.location.href = "login.html";
     return;
@@ -66,15 +62,12 @@ onAuthStateChanged(auth, (user) => {
 
   const name = user.displayName || user.email.split("@")[0];
   document.getElementById("welcome").textContent = "Welcome, " + name + " ❤️";
-
 });
-
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "login.html";
 });
-
 </script>
 
 </body>
