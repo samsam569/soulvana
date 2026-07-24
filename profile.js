@@ -1,30 +1,58 @@
-import { db, auth } from "./firebase.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { auth, db } from "./firebase.js";
 
-document.getElementById("saveProfile").addEventListener("click", async () => {
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  const user = auth.currentUser;
+import {
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+const saveButton = document.getElementById("saveProfile");
+
+onAuthStateChanged(auth, (user) => {
   if (!user) {
-    alert("Please login first");
+    alert("Please log in first.");
+    window.location.href = "login.html";
     return;
   }
 
-  try {
+  saveButton.addEventListener("click", async () => {
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const bio = document.getElementById("bio").value.trim();
 
-    await setDoc(doc(db, "users", user.uid), {
-      name: document.getElementById("name").value,
-      age: document.getElementById("age").value,
-      location: document.getElementById("location").value,
-      bio: document.getElementById("bio").value,
-      email: user.email
-    });
+    if (!name || !age || !location || !bio) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    alert("Profile saved ❤️");
-    window.location.href = "dashboard.html";
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
 
-  } catch (error) {
-    alert(error.message);
-  }
+    try {
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        name: name,
+        age: Number(age),
+        location: location,
+        bio: bio,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
 
+      alert("Profile saved successfully ❤️");
+      window.location.href = "dashboard.html";
+
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save profile: " + error.message);
+
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = "Save Profile";
+    }
+  });
 });
