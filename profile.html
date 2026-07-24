@@ -1,7 +1,9 @@
 <script type="module">
 import { auth, db } from "./firebase.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+// Preview selected photo
 document.getElementById("photo").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -14,8 +16,7 @@ document.getElementById("photo").addEventListener("change", (e) => {
   }
 });
 
-document.getElementById("saveProfile").addEventListener("click", async () => {
-  const user = auth.currentUser;
+onAuthStateChanged(auth, (user) => {
 
   if (!user) {
     alert("Please log in first.");
@@ -23,48 +24,57 @@ document.getElementById("saveProfile").addEventListener("click", async () => {
     return;
   }
 
-  const name = document.getElementById("name").value.trim();
-  const age = document.getElementById("age").value.trim();
-  const gender = document.getElementById("gender").value;
-  const lookingFor = document.getElementById("lookingFor").value;
-  const location = document.getElementById("location").value.trim();
-  const bio = document.getElementById("bio").value.trim();
-  const photoFile = document.getElementById("photo").files[0];
+  document.getElementById("saveProfile").addEventListener("click", async () => {
 
-  if (!name || !age || !gender || !lookingFor || !photoFile) {
-    alert("Please fill in all required fields.");
-    return;
-  }
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const gender = document.getElementById("gender").value;
+    const lookingFor = document.getElementById("lookingFor").value;
+    const location = document.getElementById("location").value.trim();
+    const bio = document.getElementById("bio").value.trim();
+    const photoFile = document.getElementById("photo").files[0];
 
-  const button = document.getElementById("saveProfile");
-  button.disabled = true;
-  button.textContent = "Saving...";
-
-  const reader = new FileReader();
-
-  reader.onload = async (e) => {
-    try {
-      await setDoc(doc(db, "users", user.uid), {
-        name,
-        age: Number(age),
-        gender,
-        lookingFor,
-        location,
-        bio,
-        email: user.email,
-        photo: e.target.result,
-        createdAt: new Date().toISOString()
-      });
-
-      alert("Profile saved successfully! ❤️");
-      window.location.href = "matches.html";
-    } catch (error) {
-      alert("Error: " + error.message);
-      button.disabled = false;
-      button.textContent = "Save Profile";
+    if (!name || !age || !gender || !lookingFor || !location || !bio || !photoFile) {
+      alert("Please fill in all required fields.");
+      return;
     }
-  };
 
-  reader.readAsDataURL(photoFile);
+    const button = document.getElementById("saveProfile");
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    const reader = new FileReader();
+
+    reader.onload = async (ev) => {
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          name,
+          age: Number(age),
+          gender,
+          lookingFor,
+          location,
+          bio,
+          email: user.email,
+          photo: ev.target.result,
+          updatedAt: new Date().toISOString()
+        });
+
+        alert("Profile saved successfully ❤️");
+
+        // Redirect after saving
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+        button.disabled = false;
+        button.textContent = "Save Profile";
+      }
+    };
+
+    reader.readAsDataURL(photoFile);
+
+  });
+
 });
 </script>
