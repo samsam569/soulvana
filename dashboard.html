@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soulvana Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#FDF4F8] flex h-screen">
+
+<!-- SIDEBAR -->
+<aside class="w-64 bg-white shadow-lg p-6 flex-col">
+  <h1 class="text-3xl font-bold text-pink-500 mb-10">❤️ Soulvana</h1>
+  <nav class="space-y-4">
+    <a href="dashboard.html" class="block bg-pink-500 text-white px-4 py-3 rounded-lg font-semibold">Discover</a>
+    <a href="matches.html" class="block text-gray-600 px-4 py-3 hover:bg-pink-50 rounded-lg">Matches</a>
+    <a href="messages.html" class="block text-gray-600 px-4 py-3 hover:bg-pink-50 rounded-lg">Messages</a>
+    <a href="profile.html" class="block text-gray-600 px-4 py-3 hover:bg-pink-50 rounded-lg">My Profile</a>
+    <button id="logoutBtn" class="block text-red-500 px-4 py-3 text-left w-full hover:bg-red-50 rounded-lg">Logout</button>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="flex-1 p-8 overflow-y-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Discover</h2>
+    <p class="text-gray-500" id="welcome">Welcome!</p>
+  </div>
+
+  <!-- Profile Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Card 1 -->
+    <div class="bg-white rounded-2xl shadow p-4">
+      <img src="https://i.pravatar.cc/400?img=1" class="rounded-xl w-full h-64 object-cover mb-3">
+      <h3 class="font-bold text-lg">Sophia, 28</h3>
+      <p class="text-gray-500 text-sm">New York, USA</p>
+      <button class="mt-3 w-full bg-pink-500 text-white py-2 rounded-lg">❤️ Connect</button>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-white rounded-2xl shadow p-4">
+      <img src="https://i.pravatar.cc/400?img=2" class="rounded-xl w-full h-64 object-cover mb-3">
+      <h3 class="font-bold text-lg">Liam, 30</h3>
+      <p class="text-gray-500 text-sm">London, UK</p>
+      <button class="mt-3 w-full bg-pink-500 text-white py-2 rounded-lg">❤️ Connect</button>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="bg-white rounded-2xl shadow p-4">
+      <img src="https://i.pravatar.cc/400?img=3" class="rounded-xl w-full h-64 object-cover mb-3">
+      <h3 class="font-bold text-lg">Ava, 26</h3>
+      <p class="text-gray-500 text-sm">Toronto, Canada</p>
+      <button class="mt-3 w-full bg-pink-500 text-white py-2 rounded-lg">❤️ Connect</button>
+    </div>
+
+  </div>
+</main>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// AUTH CHECK - same as yours
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  const name = user.displayName || user.email.split("@")[0];
+  document.getElementById("welcome").textContent = "Welcome, " + name + " ❤️";
+});
+
+// LOGOUT - same as yours
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+});
+</script>
+
+</body>
+</html>
